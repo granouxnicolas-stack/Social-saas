@@ -17,6 +17,9 @@ body {
   background: var(--bg);
 }
 a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .65; }
 
 .page-shell {
   min-height: 100vh;
@@ -70,9 +73,10 @@ h1 {
   padding: 14px 18px;
   border-radius: 12px;
   font-weight: 700;
+  border: 0;
 }
 .primary-button { background: var(--accent); color: white; }
-.secondary-button { border: 1px solid var(--border); background: white; }
+.secondary-button { border: 1px solid var(--border); background: white; color: var(--text); }
 
 .feature-grid {
   display: grid;
@@ -84,8 +88,73 @@ h1 {
 .feature-card span { font-weight: 700; }
 .feature-card h2 { margin: 16px 0 0; font-size: 18px; }
 
+.auth-shell {
+  display: grid;
+  place-items: center;
+}
+.auth-card { width: min(720px, 100%); }
+.auth-card h1 { font-size: clamp(40px, 6vw, 64px); }
+.auth-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 32px;
+}
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.auth-form input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  color: var(--text);
+  outline: none;
+}
+.auth-form input:focus {
+  border-color: #98a2b3;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, .06);
+}
+.form-button { margin-top: 4px; }
+.form-message {
+  margin: 16px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.text-button {
+  margin-top: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  text-decoration: underline;
+}
+.dashboard-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+}
+.company-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+.company-meta span {
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 13px;
+}
+
 @media (max-width: 800px) {
   .page-shell { padding: 28px 16px; }
   .hero-card { padding: 28px; }
   .feature-grid { grid-template-columns: 1fr; }
+  .dashboard-topline { flex-direction: column; }
 }
