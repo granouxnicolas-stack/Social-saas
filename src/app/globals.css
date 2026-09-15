@@ -17,7 +17,7 @@ body {
   background: var(--bg);
 }
 a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
+button, input, textarea { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: wait; opacity: .65; }
 
@@ -29,7 +29,9 @@ button:disabled { cursor: wait; opacity: .65; }
 }
 
 .hero-card,
-.feature-card {
+.feature-card,
+.editor-card,
+.post-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 22px;
@@ -70,6 +72,9 @@ h1 {
 
 .primary-button,
 .secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 14px 18px;
   border-radius: 12px;
   font-weight: 700;
@@ -88,24 +93,25 @@ h1 {
 .feature-card span { font-weight: 700; }
 .feature-card h2 { margin: 16px 0 0; font-size: 18px; }
 
-.auth-shell {
-  display: grid;
-  place-items: center;
-}
+.auth-shell { display: grid; place-items: center; }
 .auth-card { width: min(720px, 100%); }
 .auth-card h1 { font-size: clamp(40px, 6vw, 64px); }
-.auth-form {
+.auth-form,
+.post-form {
   display: grid;
   gap: 16px;
   margin-top: 32px;
 }
-.auth-form label {
+.auth-form label,
+.post-form > label {
   display: grid;
   gap: 8px;
   font-size: 14px;
   font-weight: 700;
 }
-.auth-form input {
+.auth-form input,
+.post-form input,
+.post-form textarea {
   width: 100%;
   padding: 14px 16px;
   border: 1px solid var(--border);
@@ -114,47 +120,52 @@ h1 {
   color: var(--text);
   outline: none;
 }
-.auth-form input:focus {
+.post-form textarea { resize: vertical; min-height: 150px; }
+.auth-form input:focus,
+.post-form input:focus,
+.post-form textarea:focus {
   border-color: #98a2b3;
   box-shadow: 0 0 0 3px rgba(17, 24, 39, .06);
 }
-.form-button { margin-top: 4px; }
-.form-message {
-  margin: 16px 0 0;
-  color: var(--muted);
-  line-height: 1.5;
-}
-.text-button {
-  margin-top: 20px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  text-decoration: underline;
-}
-.dashboard-topline {
+.post-form fieldset {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
   display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  align-items: flex-start;
-}
-.company-meta {
-  display: flex;
+  gap: 20px;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 28px;
 }
-.company-meta span {
-  padding: 9px 12px;
-  border-radius: 999px;
-  background: var(--bg);
-  color: var(--muted);
-  font-size: 13px;
-}
+.post-form fieldset label { display: flex; align-items: center; gap: 8px; }
+.post-form fieldset input { width: auto; }
+.form-button { margin-top: 4px; }
+.form-message { margin: 16px 0 0; color: var(--muted); line-height: 1.5; }
+.text-button { margin-top: 20px; padding: 0; border: 0; background: transparent; color: var(--muted); text-decoration: underline; }
+.dashboard-topline { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; }
+.company-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.company-meta span { padding: 9px 12px; border-radius: 999px; background: var(--bg); color: var(--muted); font-size: 13px; }
+
+.editor-card { padding: 32px; margin-top: 16px; }
+.editor-card h2 { margin: 0; }
+.calendar-list { margin-top: 28px; display: grid; gap: 14px; }
+.section-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.section-heading h2 { margin: 0; }
+.section-heading span { color: var(--muted); font-size: 14px; }
+.post-card { padding: 24px; display: grid; grid-template-columns: 1fr auto; gap: 24px; }
+.post-card h3 { margin: 12px 0 8px; }
+.post-card p { margin: 0; color: var(--muted); line-height: 1.55; white-space: pre-wrap; }
+.post-meta { display: grid; align-content: start; gap: 8px; min-width: 190px; color: var(--muted); font-size: 13px; text-align: right; }
+.status-pill { display: inline-flex; padding: 6px 9px; border-radius: 999px; background: var(--bg); font-size: 12px; font-weight: 700; }
+.status-scheduled { background: #eaf2ff; }
+.status-published { background: #e8f7ee; }
+.status-failed { background: #fdecec; }
+.empty-state p { color: var(--muted); }
 
 @media (max-width: 800px) {
   .page-shell { padding: 28px 16px; }
   .hero-card { padding: 28px; }
   .feature-grid { grid-template-columns: 1fr; }
   .dashboard-topline { flex-direction: column; }
+  .post-card { grid-template-columns: 1fr; }
+  .post-meta { text-align: left; }
 }
