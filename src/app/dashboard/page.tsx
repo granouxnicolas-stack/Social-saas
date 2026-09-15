@@ -1,12 +1,7 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "./sign-out-button";
-
-const stats = [
-  { label: "Publications planifiées", value: "0" },
-  { label: "Réseaux connectés", value: "0" },
-  { label: "Brouillons", value: "0" },
-];
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -14,28 +9,33 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
 
   const { data: memberships, error } = await supabase
     .from("company_members")
-    .select("role, companies(id, name, slug)")
+    .select("role, company_id, companies(id, name, slug)")
     .eq("user_id", user.id)
     .limit(1);
 
-  if (error) {
-    throw new Error(error.message);
-  }
+  if (error) throw new Error(error.message);
 
   const membership = memberships?.[0];
   const company = Array.isArray(membership?.companies)
     ? membership.companies[0]
     : membership?.companies;
 
-  if (!company) {
-    redirect("/onboarding");
-  }
+  if (!company || !membership) redirect("/onboarding");
+
+  const [{ count: scheduledCount }, { count: draftCount }] = await Promise.all([
+    supabase.from("posts").select("id", { count: "exact", head: true }).eq("company_id", membership.company_id).eq("status", "scheduled"),
+    supabase.from("posts").select("id", { count: "exact", head: true }).eq("company_id", membership.company_id).eq("status", "draft"),
+  ]);
+
+  const stats = [
+    { label: "Publications planifiées", value: String(scheduledCount ?? 0) },
+    { label: "Réseaux connectés", value: "0" },
+    { label: "Brouillons", value: String(draftCount ?? 0) },
+  ];
 
   return (
     <main className="page-shell">
@@ -49,12 +49,16 @@ export default async function DashboardPage() {
         </div>
 
         <p className="hero-copy">
-          Votre espace est connecté et sécurisé. Le prochain module sera votre calendrier éditorial.
+          Préparez vos contenus et organisez vos publications depuis votre calendrier éditorial.
         </p>
+
+        <div className="actions">
+          <Link className="primary-button" href="/dashboard/calendar">Ouvrir le calendrier éditorial</Link>
+        </div>
 
         <div className="company-meta">
           <span>Espace : {company.slug}</span>
-          <span>Rôle : {membership?.role ?? "membre"}</span>
+          <span>Rôle : {membership.role}</span>
           <span>Compte : {user.email}</span>
         </div>
       </section>
