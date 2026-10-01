@@ -169,3 +169,43 @@ h1 {
   .post-card { grid-template-columns: 1fr; }
   .post-meta { text-align: left; }
 }
+
+
+.media-uploader { display: grid; justify-items: end; }
+.upload-button input { display: none; }
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.media-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.media-card strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.media-card span, .media-card small { color: var(--muted); }
+.media-choice-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+.post-form fieldset .media-choice {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  align-items: flex-start;
+}
+.media-choice span { display: grid; gap: 4px; min-width: 0; }
+.media-choice strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.media-choice small { color: var(--muted); }
+
+@media (max-width: 800px) {
+  .media-uploader { justify-items: start; }
+}
