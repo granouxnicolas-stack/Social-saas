@@ -27,7 +27,7 @@ export async function createPost(formData: FormData) {
   if (membershipError) throw new Error(membershipError.message);
   const membership = memberships?.[0];
   if (!membership) redirect("/onboarding");
-  if (!['owner','admin','editor'].includes(membership.role)) {
+  if (!["owner", "admin", "editor"].includes(membership.role)) {
     throw new Error("Vous n'avez pas les droits pour créer une publication.");
   }
 
@@ -37,8 +37,25 @@ export async function createPost(formData: FormData) {
   const platforms = ["facebook", "instagram", "tiktok"].filter(
     (platform) => formData.get(platform) === "on",
   );
+  const requestedMedia = formData
+    .getAll("media_paths")
+    .filter((value): value is string => typeof value === "string")
+    .filter((path) => path.startsWith(`${membership.company_id}/`))
+    .slice(0, 10);
 
   if (!content) throw new Error("Le texte de la publication est obligatoire.");
+
+  let mediaPaths: string[] = [];
+  if (requestedMedia.length) {
+    const { data: assets, error: assetError } = await supabase
+      .from("media_assets")
+      .select("object_path")
+      .eq("company_id", membership.company_id)
+      .in("object_path", requestedMedia);
+
+    if (assetError) throw new Error(assetError.message);
+    mediaPaths = assets?.map((asset) => asset.object_path) ?? [];
+  }
 
   const status = scheduledAt ? "scheduled" : "draft";
   const { data: post, error: postError } = await supabase
@@ -48,6 +65,7 @@ export async function createPost(formData: FormData) {
       created_by: user.id,
       title,
       content,
+      media_urls: mediaPaths,
       scheduled_at: scheduledAt,
       status,
     })
