@@ -22,22 +22,16 @@ create table public.social_accounts (
 create index social_accounts_company_platform_idx on public.social_accounts(company_id, platform);
 alter table public.social_accounts enable row level security;
 
--- Ordinary members may see connection metadata but tokens remain server-only.
-create view public.social_account_connections
-with (security_invoker = true)
-as
-select id, company_id, platform, provider_account_id, display_name, username,
-       connection_status, token_expires_at, scopes, metadata, connected_by,
-       created_at, updated_at
-from public.social_accounts;
-
-grant select on public.social_account_connections to authenticated;
+-- OAuth secrets must never be selectable by browser clients.
 revoke all on public.social_accounts from anon, authenticated;
+grant select (
+  id, company_id, platform, provider_account_id, display_name, username,
+  connection_status, token_expires_at, scopes, metadata, connected_by,
+  created_at, updated_at
+) on public.social_accounts to authenticated;
 
--- Direct table access is reserved for service-role/server code so OAuth tokens are never exposed to browsers.
--- Membership metadata is exposed through the token-free view above and protected by this underlying RLS policy.
 create policy "members can read social account metadata"
 on public.social_accounts for select
 using (public.is_company_member(company_id));
 
--- Service role bypasses RLS and performs OAuth connection writes from trusted server routes only.
+-- OAuth connection writes and token reads are performed only by trusted server code/service role.
